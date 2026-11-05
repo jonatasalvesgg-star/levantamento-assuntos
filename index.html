@@ -178,8 +178,8 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
     <header><h2>Complemento</h2></header>
     <div class="corpo">
       <div class="campos" style="grid-template-columns:1fr">
-        <label class="campo"><span>Assuntos lançados em "Outros" — quais foram</span>
-          <textarea id="f-outros" placeholder="Liste os assuntos e a quantidade de cada um."></textarea></label>
+        <label class="campo"><span>Assunto não listado — qual e quantos</span>
+          <textarea id="f-outros" placeholder="Se houve processo de assunto que não consta da relação acima, informe o assunto e a quantidade."></textarea></label>
         <label class="campo"><span>Observações</span>
           <textarea id="f-obs" placeholder="Qualquer ressalva sobre os números informados."></textarea></label>
       </div>
@@ -216,42 +216,61 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
   /* ==================================================================== */
 
   var ASSUNTOS = [
-    ["abono-permanencia","Abono de permanência",""],
+    ["abono-complementar","Abono complementar",""],
+    ["abono-permanencia","Abono Permanência",""],
     ["adicional-noturno","Adicional noturno",""],
-    ["anulacao-ato","Anulação de ato administrativo",""],
-    ["aposentadoria","Aposentadoria","especial, invalidez, revisão de proventos"],
-    ["auxilio","Auxílio-transporte / alimentação",""],
-    ["bonus","Bônus / Bonificação por Resultados",""],
-    ["classe","Classe / revisão de classe","inclusive redução de classe de aposentado"],
-    ["concurso","Concurso / TAF / investigação social",""],
-    ["contrib-ir","Contribuição previdenciária / IR",""],
-    ["conversao-tempo","Conversão de tempo / CTC","fator 1.4, contagem e certidão de tempo"],
-    ["danos-morais","Danos morais / indenização",""],
+    ["afastamentos","Afastamentos",""],
+    ["ale","ALE",""],
+    ["alimentacao-art-72-lc-1416","Alimentação art. 72 LC 1416",""],
+    ["anulacao-de-ato-administrativo","Anulação de ato administrativo",""],
+    ["aposentadoria","Aposentadoria",""],
+    ["art-133","ART. 133",""],
+    ["art-70","Art. 70",""],
+    ["ats","ATS",""],
+    ["auxilio-transporte","Auxílio Transporte",""],
+    ["bonificacao-por-resultado","Bonificação por Resultado",""],
+    ["concurso","Concurso",""],
+    ["conversao-de-tempo","Conversão de tempo",""],
+    ["covid-19","COVID-19",""],
     ["dejep","DEJEP",""],
-    ["demissao-pad","Demissão / PAD / reintegração","inclusive cassação de aposentadoria"],
-    ["designacao","Designação / cargo em comissão",""],
-    ["desvio-funcao","Desvio de função",""],
+    ["descontos","Descontos",""],
+    ["designacao","Designação",""],
+    ["desvio-de-funcao","Desvio de função",""],
     ["diarias","Diárias",""],
-    ["enquadramento","Enquadramento / reenquadramento","LC 1.416/2024 e correlatos"],
+    ["diferenca-salarial","Diferença salarial",""],
+    ["emissao-de-documentos-ctc-ltcat-ppp","Emissão de documentos - CTC-LTCAT-PPP",""],
+    ["enquadramento-questionamento","Enquadramento - questionamento",""],
     ["ferias","Férias",""],
-    ["gess","GESS","inclusive incidência e recálculo"],
-    ["gratificacoes","Gratificações / GR / pró-labore",""],
-    ["hora-extra","Hora extra","inclusive curso e 12x36"],
-    ["incorporacao","Incorporação / vantagens",""],
+    ["folga-sap","Folga SAP",""],
+    ["gess","GESS",""],
+    ["gratificacao-executiva","Gratificação executiva",""],
+    ["honorarios","Honorários",""],
+    ["horas-extras","Horas-extras",""],
+    ["iamspe","IAMSPE",""],
+    ["indenizacao","Indenização",""],
     ["insalubridade","Insalubridade",""],
-    ["jornada","Jornada / redução de carga horária",""],
-    ["licenca-premio","Licença-prêmio","inclusive pecúnia"],
-    ["licenca-saude","Licença-saúde","inclusive LS negada e conversão em LAT"],
-    ["mandado-seguranca","Mandado de segurança",""],
-    ["paridade","Paridade / integralidade",""],
+    ["irredutibilidade-de-vencimentos","Irredutibilidade de Vencimentos",""],
+    ["licenca-premio","Licença-Prêmio",""],
+    ["licenca-saude","Licença-Saúde",""],
+    ["mudanca-de-turno","Mudança de turno",""],
+    ["pdi","PDI",""],
+    ["pensao-por-morte","Pensão por morte",""],
     ["periculosidade","Periculosidade",""],
-    ["porte-arma","Porte de arma",""],
-    ["precatorios","Precatórios / pagamento retroativo",""],
+    ["pin-premio-de-incentivo","PIN - Prêmio de Incentivo",""],
+    ["porte-de-arma","Porte de Arma",""],
+    ["pro-labore-e-gr","Pro-Labore e GR",""],
     ["progressao","Progressão",""],
-    ["promocao","Promoção","antiguidade e merecimento"],
-    ["quinquenio","Quinquênio / sexta-parte / ATS",""],
-    ["transferencia","Transferência / remoção","humanitária, união de cônjuges, LPT"],
-    ["outros","Outros","descreva no campo ao final"]
+    ["promocao","Promoção",""],
+    ["reducao-de-jornada","Redução de Jornada",""],
+    ["reenquadramento","Reenquadramento",""],
+    ["regularizacao-funcional","Regularização funcional",""],
+    ["reintegracao","Reintegração",""],
+    ["remocao","Remoção",""],
+    ["retp","RETP",""],
+    ["substituicao-eventual","Substituição eventual",""],
+    ["tempo-de-diretor","Tempo de diretor",""],
+    ["tempo-inss","Tempo INSS",""],
+    ["vale-refeicao","Vale-refeição",""]
   ];
   var BLOCOS = [
     {chave:"subsidios", grade:"grade-subsidios", cont:"cont-subsidios", rotulo:"Subsídios"},
@@ -341,7 +360,7 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
       if (vazio) L.push("  (nenhum processo informado)");
       L.push("");
     });
-    if ($("f-outros").value) L.push("Outros — detalhamento: " + $("f-outros").value);
+    if ($("f-outros").value) L.push("Assunto não listado: " + $("f-outros").value);
     if ($("f-obs").value) L.push("Observações: " + $("f-obs").value);
     return L.join("\n");
   }
