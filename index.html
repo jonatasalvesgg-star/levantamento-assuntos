@@ -141,14 +141,6 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
 
 <main class="wrap">
 
-  <div class="intro">
-    <p>Informe <strong>quantos processos</strong> você tratou em cada assunto, separando as ações de
-      <strong>subsídios</strong> das de <strong>obrigação de fazer</strong>. Preencha apenas as linhas em que
-      houve processo; as demais podem ficar em branco.</p>
-    <p>O levantamento cobre apenas <strong>2026</strong>, pela data de recebimento no setor. Conte cada processo
-      uma única vez, pelo assunto principal; reiterações do mesmo processo não contam como processo novo.</p>
-  </div>
-
   <div class="bloco">
     <header>
       <h2>Identificação</h2>
@@ -206,10 +198,10 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
     </div>
   </div>
 
-  <p class="nota">As respostas são gravadas na planilha do levantamento. Se o envio falhar, use
-    "Copiar resposta" e mande o texto ao responsável.</p>
+  <p class="nota">As respostas são gravadas na planilha do Departamento. Caso o envio falhe, utilize
+    "Copiar resposta" e encaminhe o texto ao responsável pela consolidação.</p>
 
-  <footer>Levantamento de ações judiciais por assunto — exercício de 2026.</footer>
+  <footer>Departamento de Demandas Judiciais — relatório de produtividade por assunto, exercício de 2026.</footer>
 </main>
 
 <script>
@@ -337,7 +329,8 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
 
   /* ---------- texto para cópia ---------- */
   function texto(){
-    var L = ["LEVANTAMENTO DE AÇÕES JUDICIAIS — PROCESSOS POR ASSUNTO — 2026",
+    var L = ["RELATÓRIO DE PRODUTIVIDADE — DEPARTAMENTO DE DEMANDAS JUDICIAIS",
+             "Processos por assunto — exercício de 2026", "",
              "Servidor: " + ($("f-nome").value || "(não informado)"),
              "Unidade/equipe: " + ($("f-setor").value || "—"), ""];
     BLOCOS.forEach(function(b){
