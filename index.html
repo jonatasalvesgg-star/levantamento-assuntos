@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Levantamento de Ações Judiciais — 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap">
+<style>
+/* ======================================================================
+   CONFIGURAÇÃO — cole a URL do Apps Script na constante ENDPOINT,
+   no bloco de JavaScript ao final deste arquivo.
+   ====================================================================== */
+:root{
+  --navy:#1f3449; --navy-2:#2e4f6b; --navy-3:#44607c;
+  --gold:#c8a24a; --gold-2:#a8842f; --gold-soft:#faf3e2;
+  --paper:#f5f6f8; --card:#ffffff; --ink:#16202b; --ink-2:#4a5a6a; --ink-3:#7c8c9c;
+  --rule:#d8e0e8; --rule-2:#e9eef3; --field:#ffffff; --field-rule:#bfccd8;
+  --alerta:#8b1a1f; --alerta-soft:#f8d7da; --ok:#1b5e20; --ok-soft:#d6efd8;
+  --sombra:0 1px 2px rgba(22,32,43,.06), 0 1px 10px rgba(22,32,43,.05);
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- cabeçalho ---------- */
+.topo{background:var(--navy);color:#fff;border-bottom:3px solid var(--gold)}
+.topo .wrap{padding-block:18px;display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
+.topo h1{font-family:var(--serif);font-weight:600;font-size:21px;margin:0;letter-spacing:-.01em;
+  flex:1 1 260px;min-width:0;text-wrap:balance}
+.topo span{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+
+main{padding-block:22px 72px;display:flex;flex-direction:column;gap:18px}
+
+.intro{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;box-shadow:var(--sombra)}
+.intro p{margin:0 0 8px;color:var(--ink-2);font-size:14.5px;max-width:64ch}
+.intro p:last-child{margin-bottom:0}
+.intro strong{color:var(--ink);font-weight:600}
+
+.bloco{background:var(--card);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--sombra);overflow:hidden}
+.bloco>header{padding:14px 20px;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.bloco>header h2{font-family:var(--serif);font-weight:600;font-size:17px;margin:0;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:9px;flex:1 1 auto;min-width:0}
+.faixa{width:4px;height:17px;border-radius:2px;flex:none}
+.faixa.s{background:var(--navy-2)} .faixa.o{background:var(--gold-2)}
+.bloco>header .sub{font-size:12.5px;color:var(--ink-3);flex-basis:100%;margin:0}
+.contagem{font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.contagem b{color:var(--navy);font-weight:600}
+.corpo{padding:16px 20px}
+
+.campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+label.campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+label.campo>span{font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+label.campo>span em{font-style:normal;color:var(--alerta)}
+input[type="text"],textarea{font:inherit;font-size:14.5px;color:var(--ink);background:var(--field);
+  border:1px solid var(--field-rule);border-radius:8px;padding:8px 11px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:72px;line-height:1.45}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--navy-2);outline-offset:1px}
+
+.rolagem{overflow-x:auto}
+.grade{width:100%;max-width:540px;border-collapse:collapse;font-size:14px}
+.grade thead th{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);
+  text-align:center;padding:0 0 8px;border-bottom:1px solid var(--rule)}
+.grade thead th:first-child{text-align:left}
+.grade td{padding:4px 0;border-bottom:1px solid var(--rule-2);vertical-align:middle}
+.grade tr:last-child td{border-bottom:0}
+.grade td.nome{padding-right:12px;min-width:0;line-height:1.3}
+.grade td.nome small{display:block;color:var(--ink-3);font-size:11.5px;line-height:1.3;margin-top:1px}
+.grade td.num{width:84px;text-align:center}
+.grade input.n{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;text-align:center;
+  width:66px;padding:6px 4px;color:var(--ink);background:var(--field);border:1px solid var(--field-rule);
+  border-radius:7px;-moz-appearance:textfield}
+.grade input.n::-webkit-outer-spin-button,.grade input.n::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.grade input.n.preenchido{font-weight:600}
+.bloco.s .grade input.n.preenchido{border-color:var(--navy-2);background:#eaf0f6}
+.bloco.o .grade input.n.preenchido{border-color:var(--gold-2);background:var(--gold-soft)}
+.grade tfoot td{padding-top:10px;border-top:1px solid var(--rule);font-weight:600}
+.grade tfoot td.nome{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.grade tfoot td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px}
+
+.aviso{display:block;border-radius:10px;padding:11px 14px;font-size:13.5px;border:1px solid transparent}
+.aviso.alerta{background:var(--alerta-soft);border-color:#e0a7ac;color:var(--alerta)}
+.aviso.ok{background:var(--ok-soft);border-color:#a8d4ae;color:var(--ok)}
+.aviso.neutro{background:var(--gold-soft);border-color:#e6d5a8;color:#6b5516}
+.aviso[hidden]{display:none}
+
+.enviar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+button.primario,button.secundario{font:inherit;font-size:14.5px;font-weight:600;border-radius:9px;
+  padding:11px 22px;cursor:pointer;border:1px solid transparent}
+button.primario{background:var(--navy);color:#fff;border-color:var(--navy)}
+button.primario:hover{background:var(--navy-2)}
+button.primario:disabled{opacity:.5;cursor:not-allowed}
+button.secundario{background:transparent;color:var(--ink-2);border-color:var(--field-rule)}
+button.secundario:hover{color:var(--navy);border-color:var(--navy-3)}
+.resumo{font-size:13px;color:var(--ink-3);font-family:var(--mono);font-variant-numeric:tabular-nums}
+.nota{font-size:12.5px;color:var(--ink-3);max-width:72ch;margin:0}
+footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-size:12px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="wrap">
+    <h1>Levantamento de Ações Judiciais</h1>
+    <span>Processos por assunto · 2026</span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="intro">
+    <p>Informe <strong>quantos processos</strong> você tratou em cada assunto, separando as ações de
+      <strong>subsídios</strong> das de <strong>obrigação de fazer</strong>. Preencha apenas as linhas em que
+      houve processo; as demais podem ficar em branco.</p>
+    <p>O levantamento cobre apenas <strong>2026</strong>, pela data de recebimento no setor. Conte cada processo
+      uma única vez, pelo assunto principal; reiterações do mesmo processo não contam como processo novo.</p>
+  </div>
+
+  <div class="bloco">
+    <header>
+      <h2>Identificação</h2>
+      <p class="sub">Uma resposta por servidor. Ao reenviar com o mesmo nome, a resposta anterior é substituída.</p>
+    </header>
+    <div class="corpo">
+      <div class="campos">
+        <label class="campo"><span>Nome do servidor <em>*</em></span>
+          <input type="text" id="f-nome" autocomplete="name" placeholder="Nome completo"></label>
+        <label class="campo"><span>Unidade / equipe</span>
+          <input type="text" id="f-setor" placeholder="Ex.: EAT — sede"></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="bloco s" id="bloco-subsidios">
+    <header>
+      <h2><i class="faixa s"></i>Ações de subsídios</h2>
+      <p class="sub">Pedidos de informação e subsídios prestados à PGE para instrução da defesa.</p>
+      <span class="contagem" id="cont-subsidios">Total <b>0</b></span>
+    </header>
+    <div class="corpo"><div class="rolagem"><table class="grade" id="grade-subsidios"></table></div></div>
+  </div>
+
+  <div class="bloco o" id="bloco-obrigacao">
+    <header>
+      <h2><i class="faixa o"></i>Ações de obrigação de fazer</h2>
+      <p class="sub">Determinações judiciais de cumprimento pela Administração, inclusive execuções e tutelas.</p>
+      <span class="contagem" id="cont-obrigacao">Total <b>0</b></span>
+    </header>
+    <div class="corpo"><div class="rolagem"><table class="grade" id="grade-obrigacao"></table></div></div>
+  </div>
+
+  <div class="bloco">
+    <header><h2>Complemento</h2></header>
+    <div class="corpo">
+      <div class="campos" style="grid-template-columns:1fr">
+        <label class="campo"><span>Assuntos lançados em "Outros" — quais foram</span>
+          <textarea id="f-outros" placeholder="Liste os assuntos e a quantidade de cada um."></textarea></label>
+        <label class="campo"><span>Observações</span>
+          <textarea id="f-obs" placeholder="Qualquer ressalva sobre os números informados."></textarea></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="aviso neutro" id="msg-config" hidden></div>
+  <div class="aviso ok" id="msg-ok" hidden></div>
+  <div class="aviso alerta" id="msg-erro" hidden></div>
+
+  <div class="enviar">
+    <span class="resumo" id="resumo">Nenhum processo informado ainda.</span>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button type="button" class="secundario" id="btn-copiar">Copiar resposta</button>
+      <button type="button" class="primario" id="btn-enviar">Enviar resposta</button>
+    </div>
+  </div>
+
+  <p class="nota">As respostas são gravadas na planilha do levantamento. Se o envio falhar, use
+    "Copiar resposta" e mande o texto ao responsável.</p>
+
+  <footer>Levantamento de ações judiciais por assunto — exercício de 2026.</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ====================================================================
+     1) Cole aqui a URL do aplicativo da Web gerada pelo Apps Script.
+        Termina em /exec — nunca em /dev.
+     ==================================================================== */
+  var ENDPOINT = "https://script.google.com/macros/s/AKfycbztQVCUa4mSQVe-qRS6445x4KraOsLCY66LVCCYRc_yqy2GeZRHoc38J6C0YIt0Lyk9Mw/exec";
+  /* ==================================================================== */
+
+  var ASSUNTOS = [
+    ["abono-permanencia","Abono de permanência",""],
+    ["adicional-noturno","Adicional noturno",""],
+    ["anulacao-ato","Anulação de ato administrativo",""],
+    ["aposentadoria","Aposentadoria","especial, invalidez, revisão de proventos"],
+    ["auxilio","Auxílio-transporte / alimentação",""],
+    ["bonus","Bônus / Bonificação por Resultados",""],
+    ["classe","Classe / revisão de classe","inclusive redução de classe de aposentado"],
+    ["concurso","Concurso / TAF / investigação social",""],
+    ["contrib-ir","Contribuição previdenciária / IR",""],
+    ["conversao-tempo","Conversão de tempo / CTC","fator 1.4, contagem e certidão de tempo"],
+    ["danos-morais","Danos morais / indenização",""],
+    ["dejep","DEJEP",""],
+    ["demissao-pad","Demissão / PAD / reintegração","inclusive cassação de aposentadoria"],
+    ["designacao","Designação / cargo em comissão",""],
+    ["desvio-funcao","Desvio de função",""],
+    ["diarias","Diárias",""],
+    ["enquadramento","Enquadramento / reenquadramento","LC 1.416/2024 e correlatos"],
+    ["ferias","Férias",""],
+    ["gess","GESS","inclusive incidência e recálculo"],
+    ["gratificacoes","Gratificações / GR / pró-labore",""],
+    ["hora-extra","Hora extra","inclusive curso e 12x36"],
+    ["incorporacao","Incorporação / vantagens",""],
+    ["insalubridade","Insalubridade",""],
+    ["jornada","Jornada / redução de carga horária",""],
+    ["licenca-premio","Licença-prêmio","inclusive pecúnia"],
+    ["licenca-saude","Licença-saúde","inclusive LS negada e conversão em LAT"],
+    ["mandado-seguranca","Mandado de segurança",""],
+    ["paridade","Paridade / integralidade",""],
+    ["periculosidade","Periculosidade",""],
+    ["porte-arma","Porte de arma",""],
+    ["precatorios","Precatórios / pagamento retroativo",""],
+    ["progressao","Progressão",""],
+    ["promocao","Promoção","antiguidade e merecimento"],
+    ["quinquenio","Quinquênio / sexta-parte / ATS",""],
+    ["transferencia","Transferência / remoção","humanitária, união de cônjuges, LPT"],
+    ["outros","Outros","descreva no campo ao final"]
+  ];
+  var BLOCOS = [
+    {chave:"subsidios", grade:"grade-subsidios", cont:"cont-subsidios", rotulo:"Subsídios"},
+    {chave:"obrigacao", grade:"grade-obrigacao", cont:"cont-obrigacao", rotulo:"Obrigação de fazer"}
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+  var num = function(v){ var n = parseInt(v, 10); return (isFinite(n) && n > 0) ? n : 0; };
+
+  /* ---------- grades ---------- */
+  BLOCOS.forEach(function(b){
+    var html = '<thead><tr><th scope="col">Assunto</th><th scope="col">Processos</th></tr></thead><tbody>';
+    ASSUNTOS.forEach(function(a){
+      html += '<tr><td class="nome">' + esc(a[1]) + (a[2] ? '<small>' + esc(a[2]) + '</small>' : '') +
+              '</td><td class="num"><input class="n" type="number" min="0" step="1" inputmode="numeric" id="q-' +
+              b.chave + '-' + a[0] + '" data-bloco="' + b.chave + '" data-assunto="' + a[0] +
+              '" aria-label="' + esc(a[1]) + ' — ' + b.rotulo + '"></td></tr>';
+    });
+    html += '</tbody><tfoot><tr><td class="nome">Total do bloco</td>' +
+            '<td class="num" id="tot-' + b.chave + '">0</td></tr></tfoot>';
+    $(b.grade).innerHTML = html;
+  });
+
+  function coleta(chave){
+    var out = {};
+    ASSUNTOS.forEach(function(a){
+      var n = num($("q-" + chave + "-" + a[0]).value);
+      if (n > 0) out[a[0]] = n;
+    });
+    return out;
+  }
+  function soma(d){ var t = 0; for (var k in d) if (Object.prototype.hasOwnProperty.call(d, k)) t += d[k]; return t; }
+
+  function atualiza(){
+    var geral = 0;
+    BLOCOS.forEach(function(b){
+      var t = soma(coleta(b.chave));
+      $("tot-" + b.chave).textContent = t;
+      $(b.cont).innerHTML = "Total <b>" + t + "</b>";
+      geral += t;
+    });
+    $("resumo").textContent = geral === 0 ? "Nenhum processo informado ainda."
+      : geral + (geral === 1 ? " processo informado" : " processos informados");
+  }
+  document.addEventListener("input", function(e){
+    var el = e.target;
+    if (el && el.classList && el.classList.contains("n")) {
+      el.classList.toggle("preenchido", num(el.value) > 0);
+      atualiza();
+    }
+  });
+  atualiza();
+
+  /* ---------- mensagens ---------- */
+  var t;
+  function aviso(tipo, texto){
+    clearTimeout(t);
+    $("msg-ok").hidden = true; $("msg-erro").hidden = true;
+    if (!texto) return;
+    var alvo = tipo === "ok" ? $("msg-ok") : $("msg-erro");
+    alvo.innerHTML = texto; alvo.hidden = false;
+    alvo.scrollIntoView({block:"nearest", behavior:"smooth"});
+    if (tipo === "ok") t = setTimeout(function(){ $("msg-ok").hidden = true; }, 12000);
+  }
+
+  var configurado = ENDPOINT.indexOf("script.google.com") !== -1 && /\/exec\s*$/.test(ENDPOINT);
+  if (!configurado) {
+    $("msg-config").innerHTML = "<b>Página ainda não configurada.</b> Cole a URL do Apps Script na constante " +
+      "<code>ENDPOINT</code>, no início do bloco &lt;script&gt; deste arquivo. Até lá, o envio fica indisponível " +
+      "e só o botão “Copiar resposta” funciona.";
+    $("msg-config").hidden = false;
+  }
+
+  /* ---------- texto para cópia ---------- */
+  function texto(){
+    var L = ["LEVANTAMENTO DE AÇÕES JUDICIAIS — PROCESSOS POR ASSUNTO — 2026",
+             "Servidor: " + ($("f-nome").value || "(não informado)"),
+             "Unidade/equipe: " + ($("f-setor").value || "—"), ""];
+    BLOCOS.forEach(function(b){
+      var d = coleta(b.chave);
+      L.push(b.rotulo.toUpperCase() + "  (total: " + soma(d) + ")");
+      var vazio = true;
+      ASSUNTOS.forEach(function(a){ if (d[a[0]]) { vazio = false; L.push("  " + a[1] + ": " + d[a[0]]); } });
+      if (vazio) L.push("  (nenhum processo informado)");
+      L.push("");
+    });
+    if ($("f-outros").value) L.push("Outros — detalhamento: " + $("f-outros").value);
+    if ($("f-obs").value) L.push("Observações: " + $("f-obs").value);
+    return L.join("\n");
+  }
+  $("btn-copiar").addEventListener("click", function(){
+    var txt = texto();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function(){
+        aviso("ok", "<b>Resposta copiada.</b> Pode colar em um e-mail ou documento.");
+      }).catch(function(){ caiFallback(txt); });
+    } else { caiFallback(txt); }
+  });
+  function caiFallback(txt){
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = txt; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      aviso(ok ? "ok" : "erro", ok ? "<b>Resposta copiada.</b>" :
+        "<b>Não foi possível copiar.</b> Selecione os números na tela e copie manualmente.");
+    } catch (e) {
+      aviso("erro", "<b>Não foi possível copiar.</b> Selecione os números na tela e copie manualmente.");
+    }
+  }
+
+  /* ---------- envio ---------- */
+  $("btn-enviar").addEventListener("click", function(){
+    var nome = $("f-nome").value.trim();
+    if (!nome) { aviso("erro", "<b>Informe o nome do servidor</b> antes de enviar."); $("f-nome").focus(); return; }
+    if (!configurado) {
+      aviso("erro", "<b>O envio ainda não está configurado nesta página.</b> Use “Copiar resposta” e mande o texto ao responsável.");
+      return;
+    }
+    var subs = coleta("subsidios"), obr = coleta("obrigacao");
+    if (soma(subs) + soma(obr) === 0 &&
+        !window.confirm("Nenhum processo foi informado. Enviar assim mesmo?")) return;
+
+    var corpo = {
+      nome: nome,
+      setor: $("f-setor").value.trim(),
+      outros: $("f-outros").value.trim(),
+      obs: $("f-obs").value.trim(),
+      subsidios: subs,
+      obrigacao: obr
+    };
+
+    var btn = $("btn-enviar");
+    btn.disabled = true; btn.textContent = "Enviando…";
+    // text/plain evita a verificação prévia de CORS; o Apps Script lê o corpo como JSON.
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(corpo)
+    }).then(function(r){ return r.json(); }).then(function(res){
+      if (res && res.ok) {
+        aviso("ok", "<b>Resposta registrada na planilha.</b> " +
+          (res.atualizou ? "A resposta anterior com este nome foi substituída." :
+                           "Obrigado — pode fechar a página.") );
+      } else {
+        aviso("erro", "<b>A planilha recusou o envio.</b> " +
+          esc((res && res.erro) || "Motivo não informado.") + " Use “Copiar resposta” e avise o responsável.");
+      }
+    }).catch(function(){
+      aviso("erro", "<b>Não foi possível enviar agora.</b> Verifique a conexão e tente de novo. " +
+        "Se persistir, use “Copiar resposta” e mande o texto ao responsável.");
+    }).then(function(){
+      btn.disabled = false; btn.textContent = "Enviar resposta";
+    });
+  });
+})();
+</script>
+</body>
+</html>
