@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Levantamento de Ações Judiciais — 2026</title>
+<title>Relatório de Produtividade — DDJ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap">
@@ -32,10 +32,19 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 
 /* ---------- cabeçalho ---------- */
 .topo{background:var(--navy);color:#fff;border-bottom:3px solid var(--gold)}
-.topo .wrap{padding-block:18px;display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
-.topo h1{font-family:var(--serif);font-weight:600;font-size:21px;margin:0;letter-spacing:-.01em;
-  flex:1 1 260px;min-width:0;text-wrap:balance}
-.topo span{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.topo .wrap{padding-block:20px;display:flex;gap:16px;align-items:center}
+.topo .emblema{flex:none;width:56px;height:56px}
+.topo .texto{min-width:0;display:flex;flex-direction:column;gap:3px}
+.topo .orgao{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--gold);line-height:1.3}
+.topo h1{font-family:var(--serif);font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em;
+  line-height:1.2;text-wrap:balance}
+.topo .exercicio{font-size:12px;color:#aebccb;letter-spacing:.03em}
+@media (max-width:420px){
+  .topo .emblema{width:44px;height:44px}
+  .topo h1{font-size:18px}
+  .topo .orgao{font-size:10px;letter-spacing:.08em}
+}
 
 main{padding-block:22px 72px;display:flex;flex-direction:column;gap:18px}
 
@@ -109,8 +118,24 @@ footer{border-top:1px solid var(--rule);margin-top:10px;padding-block:16px;font-
 
 <div class="topo">
   <div class="wrap">
-    <h1>Levantamento de Ações Judiciais</h1>
-    <span>Processos por assunto · 2026</span>
+    <svg class="emblema" viewBox="0 0 64 64" role="img" aria-label="Emblema: balança da justiça">
+      <circle cx="32" cy="32" r="30" fill="#16232f" stroke="#c8a24a" stroke-width="1.5"/>
+      <circle cx="32" cy="15.5" r="2.2" fill="#c8a24a"/>
+      <g fill="none" stroke="#c8a24a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 17.7V46"/>
+        <path d="M23.5 47h17"/>
+        <path d="M16 22h32"/>
+        <path d="M16 22v5"/>
+        <path d="M48 22v5"/>
+        <path d="M9.5 27q6.5 9 13 0"/>
+        <path d="M41.5 27q6.5 9 13 0"/>
+      </g>
+    </svg>
+    <div class="texto">
+      <span class="orgao">Departamento de Demandas Judiciais</span>
+      <h1>Relatório de Produtividade</h1>
+      <span class="exercicio">Processos por assunto · exercício de 2026</span>
+    </div>
   </div>
 </div>
 
